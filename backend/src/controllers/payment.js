@@ -6,9 +6,25 @@ import User from '../models/user.js';
 import Notification from '../models/notifications.js';
 import { checkAndUpdateBadges } from '../utils/badgeService.js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+let stripeClient = null;
+
+const getStripe = () => {
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+  if (!apiKey) return null;
+  if (!stripeClient) {
+    stripeClient = new Stripe(apiKey);
+  }
+  return stripeClient;
+};
 
 export const createPaymentIntent = async (req, res) => {
+  const stripe = getStripe();
+  if (!stripe) {
+    return res.status(503).json({
+      error: 'Payments are not configured. Set STRIPE_SECRET_KEY in backend/.env.',
+    });
+  }
+
   const { paymentMethodId, cartItems } = req.body;
   const buyerId = req.user.id;
 

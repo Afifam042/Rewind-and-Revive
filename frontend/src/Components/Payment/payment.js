@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, Typography, Divider } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../Layout/layout";
 
 const Payment = () => {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
-  const { productId } = useParams();
 
   useEffect(() => {
     const fetchCartProducts = async () => {

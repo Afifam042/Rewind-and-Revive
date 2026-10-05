@@ -109,8 +109,8 @@ const Chatbot = ({ toggleChatWindow }) => {
 <Paper
   elevation={6}
   sx={{
-    width: { xs: '100vw', sm: 360 },
-    height: { xs: '100vh', sm: 440 },
+    width: '100%',
+    height: '100%',
     borderRadius: { xs: 0, sm: 2 },
     display: 'flex',
     flexDirection: 'column',

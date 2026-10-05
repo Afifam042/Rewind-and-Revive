@@ -1,119 +1,95 @@
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
-import clothesHanging from './images/clotheshanging.jpg';
-import menImage from './images/men.jpg';
+import coatImage from '../Header/images/r.jpg';
 
-const LimitedTimeDeals = () => {
-  const navigate = useNavigate();
+const SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+const SERIF = '"Newsreader", "Iowan Old Style", Georgia, serif';
 
-  return (
+const LimitedTimeDeals = () => null;
+
+export const SellCloser = () => (
+  <Box
+    component="section"
+    sx={{
+      mt: { xs: 3, md: 4 },
+      mx: { xs: 1.5, md: 2.5 },
+      mb: { xs: 2, md: 3 },
+      borderRadius: { xs: '20px', md: '28px' },
+      overflow: 'hidden',
+      display: 'grid',
+      gridTemplateColumns: { xs: '1fr', md: 'auto 1fr' },
+      alignItems: 'center',
+      bgcolor: '#85586F',
+      color: '#fff',
+      fontFamily: SANS,
+      '& .MuiTypography-root': { fontFamily: 'inherit' },
+    }}
+  >
+    <Box sx={{ p: { xs: 2.5, md: 3 }, pb: { xs: 0, md: 3 }, display: 'flex', justifyContent: { xs: 'flex-start', md: 'center' } }}>
+      <Box
+        component="img"
+        src={coatImage}
+        alt="Black coat and white bag hanging on a wall"
+        sx={{
+          width: { xs: 148, md: 168 },
+          height: { xs: 148, md: 168 },
+          objectFit: 'cover',
+          objectPosition: 'center',
+          borderRadius: '16px',
+          display: 'block',
+        }}
+      />
+    </Box>
     <Box
-      component="section"
-      aria-label="Featured deals"
       sx={{
         display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
-        alignItems: 'center',
+        flexDirection: 'column',
         justifyContent: 'center',
-        py: { xs: 4, md: 6 },
-        px: { xs: 2, md: 4 },
-        gap: { xs: 3, md: 5 },
-        textAlign: 'center',
+        px: { xs: 2.5, md: 4, lg: 5 },
+        py: { xs: 3, md: 0 },
       }}
     >
-      {/* Left Image */}
-      <Box sx={{ position: 'relative', width: { xs: '100%', sm: '60%', md: '250px' }, flexShrink: 0 }}>
-        <Box
-          component="img"
-          src={clothesHanging}
-          alt="Curated rack of second-hand clothing"
-          loading="lazy"
-          decoding="async"
-          sx={{
-            width: '100%',
-            height: 'auto',
-            display: 'block',
-            borderRadius: '10px',
-          }}
-        />
-      </Box>
-
-      {/* Text Content */}
-      <Box sx={{ maxWidth: 600, textAlign: 'center', px: { xs: 0, md: 2 } }}>
-        <Typography
-          variant="h6"
-          component="p"
-          sx={{ color: '#666', mb: 1, fontWeight: 400 }}
-        >
-          All in One Stop
-        </Typography>
-        <Typography
-          variant="h4"
-          component="h2"
-          sx={{
-            fontWeight: 'bold',
-            color: '#333',
-            mb: 2,
-            fontSize: { xs: '1.8rem', md: '2.5rem' },
-            lineHeight: 1.2,
-          }}
-        >
-          Hurry! Limited Products awaited
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            color: '#555',
-            mb: 3,
-            fontSize: { xs: '0.9rem', md: '1rem' },
-            lineHeight: 1.6,
-          }}
-        >
-          Grab these price friendly products. Our carefully curated selection is designed
-          to elevate your style without breaking the bank.
-        </Typography>
-        <Button
-          variant="contained"
-          onClick={() => navigate('/catalogue')}
-          sx={{
-            backgroundColor: '#ff5722',
-            color: '#fff',
-            px: 3,
-            py: 1.25,
-            borderRadius: '5px',
-            textTransform: 'none',
-            fontWeight: 600,
-            boxShadow: 'none',
-            '&:hover': {
-              backgroundColor: '#e64a19',
-              boxShadow: '0 4px 12px rgba(255, 87, 34, 0.3)',
-            },
-          }}
-        >
-          Buy Now
-        </Button>
-      </Box>
-
-      {/* Right Image */}
-      <Box sx={{ position: 'relative', width: { xs: '100%', sm: '60%', md: '250px' }, flexShrink: 0 }}>
-        <Box
-          component="img"
-          src={menImage}
-          alt="Model wearing pre-loved menswear"
-          loading="lazy"
-          decoding="async"
-          sx={{
-            width: '100%',
-            height: 'auto',
-            display: 'block',
-            borderRadius: '10px',
-          }}
-        />
+      <Typography sx={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', mb: 1, color: '#f3d5df' }}>
+        For sellers
+      </Typography>
+      <Typography
+        component="h2"
+        sx={{
+          fontFamily: `${SERIF} !important`,
+          fontWeight: 400,
+          fontSize: { xs: '1.5rem', md: '1.75rem' },
+          lineHeight: 1.15,
+          letterSpacing: '-0.02em',
+          maxWidth: '18ch',
+        }}
+      >
+        Sell what you no longer wear.
+      </Typography>
+      <Typography sx={{ mt: 1, maxWidth: 420, fontSize: 14, lineHeight: 1.5, color: '#f6e7ec' }}>
+        Photograph the piece, set a price or open it to bids, and it goes on the shop.
+      </Typography>
+      <Box
+        component={Link}
+        to="/createproduct"
+        sx={{
+          mt: 2,
+          alignSelf: 'flex-start',
+          color: '#fff',
+          textDecoration: 'none',
+          fontSize: 12,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          borderBottom: '1px solid #fff',
+          pb: '2px',
+          '&:hover': { opacity: 0.65 },
+        }}
+      >
+        List a piece
       </Box>
     </Box>
-  );
-};
+  </Box>
+);
 
 export default LimitedTimeDeals;

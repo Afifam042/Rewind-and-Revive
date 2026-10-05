@@ -12,8 +12,6 @@ const SizeChartMUI = () => {
   const [type, setType] = useState('top');
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
- 
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -24,8 +22,21 @@ const SizeChartMUI = () => {
 
   return (
     <>
-      <Button   variant="outlined"  size={isMobile ? "small" : "medium"} startIcon={<TableChartIcon />} onClick={handleOpen}  sx={{   minWidth: isMobile ? 'auto' : '120px',  ml: isMobile ? 1 : 2,height: isMobile ? '40px' : '56px',  '& .MuiButton-startIcon': {  mr: isMobile ? 0 : 1} }}>
-        {isMobile ? "Size Guide " : "Size Guide"}
+      <Button
+        onClick={handleOpen}
+        startIcon={<TableChartIcon sx={{ fontSize: 16 }} />}
+        sx={{
+          color: '#85586F',
+          textTransform: 'none',
+          fontWeight: 600,
+          fontSize: 13,
+          fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+          minWidth: 0,
+          px: 0,
+          '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
+        }}
+      >
+        Size guide
       </Button>
 
       <Dialog   fullScreen={fullScreen}  maxWidth="md" fullWidth    open={open} onClose={handleClose} >

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography, Grid, Link, Card, CardMedia, CardContent, Button, Skeleton } from '@mui/material';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Box, Typography, Grid, Link, Card, CardMedia, CardContent, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import SkeletonLoader from '../Utils/skeletonLoader';
 const PopularFabricsSection = () => {
   const navigate = useNavigate();

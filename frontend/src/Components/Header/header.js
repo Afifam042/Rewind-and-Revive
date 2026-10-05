@@ -1,153 +1,208 @@
 import React from 'react';
-import { Box, Button, List, ListItem, ListItemIcon,AppBar, Toolbar,  ListItemText, IconButton,CardMedia, Stack, Grid, Typography, Card } from '@mui/material';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import AddSharpIcon from '@mui/icons-material/AddSharp';
-import { Link, useNavigate } from 'react-router-dom';
+import { Box, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-import 'swiper/css';
+import womenImage from '../MostPopularItem/images/offwhitegownwomen.webp';
+import menImage from '../LimitedTimeDeals/images/men.jpg';
+import rackImage from '../LimitedTimeDeals/images/clotheshanging.jpg';
 
-const styles = {
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    backgroundColor: 'hsla(353, 8%, 40%, 1)', // Brownish
-    margin: 0,
-    padding: 0,
-  },
-  p: {
-    color: '#fff',
-    fontFamily: 'Avenir Next, Helvetica Neue, Helvetica, Tahoma, sans-serif',
-    fontSize: { xs: '2em', sm: '3em', md: '5em', lg: '8em' },
-    fontWeight: 700,
-    letterSpacing: 'calc(300em / 1000)',
-    '& span': {
-      display: 'inline-block',
-      position: 'relative',
-      transformStyle: 'preserve-3d',
-      perspective: '500px',
-      WebkitFontSmoothing: 'antialiased',
-      '&:before, &:after': {
-        display: 'none', // Hidden initially
-        position: 'absolute',
-        top: 0,
-        left: '-1px',
-        transformOrigin: 'left top',
-        transition: 'all ease-out .3s', // Animation duration
-        content: 'attr(data-text)',
-      },
-      '&:before': {
-        zIndex: 1,
-        color: 'rgba(0, 0, 0, 0.2)',
-        transform: 'scale(1.1, 1) skew(0deg, -20deg)', // Initial shadow skew
-      },
-      '&:after': {
-        zIndex: 2,
-        color: 'hsla(259, 36%, 47%, 1)', // Purple background
-        textShadow: '-1px 0 1px hsla(259, 36%, 47%, 1), 1px 0 1px rgba(0, 0, 0, 0.8)',
-        transform: 'rotateY(-40deg)', // Initial skew
-      },
-      '&:hover': {
-        '&:before': {
-          transform: 'scale(1.1, 1) skew(0deg, -5deg)', // Hover shadow skew
-        },
-        '&:after': {
-          transform: 'rotateY(-10deg)', // Hover skew
-        },
-      },
-    },
-  },
-};
-function Header() {
-  const navigate = useNavigate();
+const HERO = '/img-removebg-preview.png';
 
-  return (
-    <>
+const SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+const MAUVE = '#85586F';
+const MAUVE_DEEP = '#6a4458';
+const CREAM = '#f6f1ee';
+const INK = '#24181c';
 
-    <Box marginLeft={4}  p={{ xs: 1, md: 5 }} marginTop={{xs:2,sm:0}} >
+const LOOKS = [
+  { title: 'Women', line: 'Dresses, tailoring, one-off finds', image: womenImage, to: '/catalogue', alt: 'Woman in a beige dress' },
+  { title: 'Men', line: 'Shirts, layers, everyday pieces', image: menImage, to: '/catalogue', alt: 'Man in a brown overshirt' },
+  { title: 'Auctions', line: 'A few pieces, highest bid', image: rackImage, to: '/bidProduct', alt: 'Clothes on white hangers' },
+];
 
-      <Grid container spacing={{ xs: 3, md: 8 }}  >
-        <Grid item xs={12} md={5} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <Box>
-            <Typography variant='h2' fontFamily={"'Times New Roman', serif"}fontSize={{xs: '2rem', sm: '2.5rem',   md: '2.5rem',lg: '2.75rem',  }}>
-              Rewind and Revive
-            </Typography>
-            <Typography variant='body2'  fontSize={{   xs: '0.750rem', xs: '1rem',md:"0.95rem", lg: '1.125rem', }} >
-              Discover sustainable fashion at Rewind & Revive, the ultimate online thrift store for unique, second-hand treasures
-            </Typography>
-            <Stack direction="row" py={2}>
-              <Button onClick={()=> navigate("/catalogue")} fontSize={{ xs: "0.75rem" }} sx={{ color: "white", backgroundColor: "#B3A398",'&:hover': { backgroundColor: "#576F72" }  }}>
-                Explore More
-              </Button>
-            </Stack>
-          </Box>
-
-          {/* "What Makes Us Pro?" — sits at the bottom of the left column,
-              so its bottom aligns with the bottom of the right-column images. */}
-          <Stack py={2}>
-            <Typography variant="h5" fontFamily={"'Times New Roman', serif"} fontSize={{  xs: '1.5rem', sm: '1.75rem',md: '2rem',  lg: '2.25rem',}} >
-                 What Makes Us Pro?
-            </Typography>
-            <List>
-              <ListItem>
-                <ListItemIcon><RadioButtonCheckedIcon sx={{ color: "#B3A398" }} /></ListItemIcon>
-                <ListItemText primaryTypographyProps={{ variant: "body2" }}>Quality second-hand fashion</ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemIcon><RadioButtonCheckedIcon sx={{ color: "#C1A3A3" }} /></ListItemIcon>
-                <ListItemText primaryTypographyProps={{ variant: "body2" }}>Affordable sustainable styles</ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemIcon><RadioButtonCheckedIcon sx={{ color: "#618264" }} /></ListItemIcon>
-                <ListItemText primaryTypographyProps={{ variant: "body2" }}>Pre-loved designer items</ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemIcon><RadioButtonCheckedIcon sx={{ color: "#7C9D96" }} /></ListItemIcon>
-                <ListItemText primaryTypographyProps={{ variant: "body2" }}>Fashion-forward sustainability</ListItemText>
-              </ListItem>
-            </List>
-          </Stack>
-        </Grid>
-
-        {/* Nested Grid Container */}
-        <Grid container spacing={{xs:5,sm:10}}  xs={12} md={7}  >
-
-          <Grid item xs={6} md={6} >
-
-             <Box marginLeft={3}  marginTop={{xs:5,sm:10}} sx={{ minWidth:100,width: {xs: '100%',sm:300,md:200,lg:"80%"}, height:{xs: 250, sm: 350, md: 400,lg:470}, background: 'linear-gradient(45deg,#A6B37D ,#CCD3CA)',   border: '2px solid #fffefa', transform: 'rotate(5deg)', display: 'flex',   alignItems: 'center',   justifyContent: 'center', position:"relative", }} >
-               <Card>
-                 <CardMedia component="img" image={require("./images/r.jpg")}  alt="Description"  sx={{width:"100%",height:"100%",position:"absolute",transform: 'rotate(355deg)',top:5,left:-5,objectFit: 'cover'}} />
-                </Card>
-             </Box>
-          </Grid>
-
-          <Grid item xs={6} md={6} justifyContent={"space-around"} marginTop={{xs:5,sm:10}} >
-
-            <Stack direction="row" spacing={2} >
-              <IconButton onClick={()=>navigate("/bidProduct")} sx={{ border: '2px solid #000', borderRadius: '1' }}>
-                <AddSharpIcon  sx={{ color: "orangered",fontSize:{ xs: "0.75rem" } }} />
-              </IconButton>
-              <Typography to={"/bidProduct"} component={Link} variant="h5" fontSize={{ xs: "0.85rem",md: '1rem',
-              lg: '1.125rem', }} fontFamily={"'Times New Roman', serif"} sx={{color:"black"}}>
-                Explore exclusive items up for bidding!
-              </Typography>
-            </Stack>
-
-
-            <Box  marginTop={{xs:5,md:2}} p={{xs:1,sm:2,md:5}}sx={{ minWidth:{xs:80,sm:100,md:70},width: {xs: '100%',sm:250,md:200,lg:250},height: {xs: 200, sm: 300, md: 280,lg:350},  background: 'linear-gradient(135deg, #F5E8DD 50%,  #867070 50%)',  border: '2px solid #fffefa',overflow: 'hidden' }}>
-                  <CardMedia component="img"sx={{ height: '100%', width: '100%',objectFit: 'cover' }}image={require("./images/a.jpg")} alt="Description" />
-            </Box>
-          </Grid>
-        </Grid>
-
-      </Grid>
-
-      {/* <Grid item xs={12}>
-         <Swipe/>
-         </Grid> */}
+const LookCard = ({ title, line, image, to, alt }) => (
+  <Box
+    component={Link}
+    to={to}
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1.5,
+      textDecoration: 'none',
+      color: INK,
+      bgcolor: '#fff',
+      borderRadius: '16px',
+      p: 1,
+      pr: 1.5,
+      boxShadow: '0 10px 30px rgba(60, 30, 45, 0.12)',
+      '&:hover': { transform: 'translateY(-2px)' },
+      transition: 'transform 0.2s ease',
+    }}
+  >
+    <Box
+      component="img"
+      src={image}
+      alt={alt}
+      sx={{ width: 76, height: 76, objectFit: 'cover', objectPosition: 'center 20%', borderRadius: '16px', flexShrink: 0 }}
+    />
+    <Box sx={{ minWidth: 0, flex: 1 }}>
+      <Typography sx={{ fontFamily: SANS, fontWeight: 650, fontSize: 16, lineHeight: 1.15 }}>{title}</Typography>
+      <Typography sx={{ fontFamily: SANS, fontSize: 12, color: '#6d5c63', mt: 0.4, lineHeight: 1.35 }}>{line}</Typography>
     </Box>
-    </>
+    <Box
+      sx={{
+        width: 28,
+        height: 28,
+        borderRadius: '50%',
+        bgcolor: MAUVE,
+        color: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+      }}
+    >
+      <ArrowForwardIcon sx={{ fontSize: 16 }} />
+    </Box>
+  </Box>
+);
+
+function Header() {
+  return (
+    <Box sx={{ bgcolor: CREAM, fontFamily: SANS, color: INK, '& .MuiTypography-root': { fontFamily: 'inherit' }, pb: { xs: 1, md: 2 } }}>
+      <Box
+        component="section"
+        sx={{
+          position: 'relative',
+          mx: { xs: 1.5, md: 2.5 },
+          mt: { xs: 1.5, md: 2 },
+          borderRadius: { xs: '20px', md: '28px' },
+          bgcolor: MAUVE_DEEP,
+          overflow: 'hidden',
+          minHeight: { md: 470 },
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          alignItems: 'center',
+          px: { xs: 2.5, md: 4, lg: 5 },
+          pt: { xs: 3, md: 3.5 },
+          pb: { xs: 3, md: 5 },
+        }}
+      >
+        <Box
+          aria-hidden
+          sx={{
+            position: { xs: 'relative', md: 'absolute' },
+            left: { md: 0 },
+            right: { md: 0 },
+            top: { md: '50%' },
+            transform: { md: 'translateY(calc(-50% - 1.5cm))' },
+            zIndex: 0,
+            fontFamily: SANS,
+            fontWeight: 500,
+            fontSize: { xs: '12.6vw', sm: '4rem', md: '5.625rem', lg: '7.35rem' },
+            lineHeight: 1,
+            letterSpacing: { xs: '-0.03em', md: '0.02em' },
+            textAlign: 'center',
+            color: 'transparent',
+            WebkitTextStroke: '2px rgba(255,255,255,0.9)',
+            pointerEvents: 'none',
+            userSelect: 'none',
+            whiteSpace: 'nowrap',
+            mt: { xs: 0.5, md: 0 },
+            mb: { xs: 1, md: 0 },
+          }}
+        >
+          REWIND & REVIVE
+        </Box>
+
+        <Box sx={{ position: 'relative', zIndex: 2, py: { md: 4 }, pr: { md: 2 } }}>
+          <Typography sx={{ color: '#f3d5df', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+            New this week
+          </Typography>
+          <Typography
+            component="h1"
+            sx={{
+              mt: 1.25,
+              color: '#fff',
+              fontSize: { xs: '1.85rem', md: '2.15rem' },
+              fontWeight: 500,
+              lineHeight: 1.05,
+              letterSpacing: '-0.03em',
+              maxWidth: '11ch',
+            }}
+          >
+            Back in rotation.
+          </Typography>
+        </Box>
+
+        <Box
+          component="img"
+          src={HERO}
+          alt="Illustrated group of four women"
+          sx={{
+            position: { xs: 'relative', md: 'absolute' },
+            left: { md: '50%' },
+            bottom: { md: 46 },
+            transform: { md: 'translateX(-50%)' },
+            zIndex: 1,
+            width: { xs: '78%', md: 420, lg: 460 },
+            height: { xs: 210, md: 276, lg: 300 },
+            mx: { xs: 'auto', md: 0 },
+            my: { xs: 1.5, md: 0 },
+            objectFit: 'contain',
+            objectPosition: 'center bottom',
+            display: 'block',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <Box sx={{ position: 'relative', zIndex: 2, py: { xs: 1, md: 4 }, pl: { md: 3 }, display: 'flex', flexDirection: 'column', alignItems: { xs: 'flex-start', md: 'flex-end' }, justifyContent: 'center', textAlign: { md: 'right' } }}>
+          <Typography sx={{ color: '#f6e7ec', fontSize: 14, lineHeight: 1.5, maxWidth: 260 }}>
+            Pre-loved clothes, still sharp. Shop someone’s closet, or list what you’ve outgrown.
+          </Typography>
+          <Box
+            component={Link}
+            to="/catalogue"
+            sx={{
+              mt: 2.5,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+              bgcolor: '#fff',
+              color: MAUVE_DEEP,
+              textDecoration: 'none',
+              borderRadius: '999px',
+              px: 2.25,
+              py: 1.1,
+              fontSize: 13,
+              fontWeight: 650,
+              letterSpacing: '0.04em',
+              '&:hover': { bgcolor: '#f3e4ea' },
+            }}
+          >
+            Shop now
+            <ArrowForwardIcon sx={{ fontSize: 16 }} />
+          </Box>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          position: 'relative',
+          zIndex: 2,
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' },
+          gap: 1.5,
+          px: { xs: 1.5, md: 5, lg: 8 },
+          mt: { xs: 1.5, md: -3 },
+        }}
+      >
+        {LOOKS.map((look) => (
+          <LookCard key={look.title} {...look} />
+        ))}
+      </Box>
+    </Box>
   );
 }
 

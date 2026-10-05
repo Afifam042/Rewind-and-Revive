@@ -6,8 +6,6 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import axios from "axios";
 import './style.css'; // Import the CSS
-import { CardTravel } from "@mui/icons-material";
-
 
 const AddCart = () => {
   const navigate = useNavigate();
@@ -17,30 +15,29 @@ const AddCart = () => {
   });
   const { productId }= useParams();
 
-  // Fetch cart data from the API
+  // Fetch cart data from the API once, from the cart saved before this screen opened.
   useEffect(() => {
+    const savedCart = localStorage.getItem("cart");
+    const initialCart = savedCart ? JSON.parse(savedCart) : [];
+    if (initialCart.length === 0) return;
+
     const fetchCartProducts = async () => {
       try {
         const updatedCart = await Promise.all(
-          cart.map(async (item) => {
-            // Fetch product data from API using item.id
+          initialCart.map(async (item) => {
             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/api/product/${item.id}`);
-            return { ...item, ...response.data }; // Merge response data with item data
+            return { ...item, ...response.data };
           })
         );
-        setCart(updatedCart); // Update cart with the fetched data
-        console.log('Saving cart to localStorage:', updatedCart);
-        localStorage.setItem("cart", JSON.stringify(updatedCart)); // Save updated cart to localStorage
+        setCart(updatedCart);
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
       } catch (error) {
         console.error("Error fetching cart:", error);
       }
     };
 
-    // Only fetch product data if cart has items
-    if (cart.length > 0) {
-      fetchCartProducts();
-    }
-  }, []); // Only re-run when the cart changes (fetch updated product details)
+    fetchCartProducts();
+  }, []);
   
   
   

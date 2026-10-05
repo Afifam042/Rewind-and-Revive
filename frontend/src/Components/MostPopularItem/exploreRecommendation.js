@@ -3,11 +3,7 @@ import {
   Box,
   Typography,
   Grid,
-  Card,
-  CardContent,
   Skeleton,
-  Container,
-  Button,
 } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import axios from 'axios';
@@ -16,14 +12,7 @@ import SectionHeader from '../Utils/SectionHeader';
 
 axios.defaults.withCredentials = true;
 
-const TOKENS = {
-  border: '#E5E0DA',
-  borderHover: '#C9C0B6',
-  ink: '#1F1B16',
-  inkSoft: '#6B635A',
-  bg: '#FFFFFF',
-  bgMuted: '#FAF8F5',
-};
+const SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Card — same visual language as the catalogue & bidding cards.
@@ -43,35 +32,21 @@ const RecommendedCard = ({ product }) => {
   };
 
   return (
-    <Card
-      elevation={0}
+    <Box
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      sx={{
-        height: '100%',
-        backgroundColor: TOKENS.bg,
-        border: `1px solid ${TOKENS.border}`,
-        borderRadius: 2,
-        overflow: 'hidden',
-        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-        '&:hover': {
-          borderColor: TOKENS.borderHover,
-          boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
-        },
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+      sx={{ height: '100%', fontFamily: SANS }}
     >
       <Box
         component={RouterLink}
         to={`/product/${product._id}`}
         sx={{
           display: 'block',
-          position: 'relative',
           width: '100%',
-          aspectRatio: '4/5',
-          backgroundColor: TOKENS.bgMuted,
+          aspectRatio: '1 / 1',
+          backgroundColor: '#f2f2f2',
           overflow: 'hidden',
+          borderRadius: '16px',
         }}
       >
         {display && (
@@ -81,7 +56,7 @@ const RecommendedCard = ({ product }) => {
             loading="lazy"
             decoding="async"
             width="400"
-            height="500"
+            height="400"
             style={{
               width: '100%',
               height: '100%',
@@ -92,13 +67,7 @@ const RecommendedCard = ({ product }) => {
         )}
       </Box>
 
-      <CardContent
-        sx={{
-          p: 1.5,
-          flexGrow: 1,
-          '&:last-child': { pb: 1.5 },
-        }}
-      >
+      <Box sx={{ pt: 1.25 }}>
         <Box
           component={RouterLink}
           to={`/product/${product._id}`}
@@ -106,63 +75,46 @@ const RecommendedCard = ({ product }) => {
         >
           <Typography
             sx={{
-              fontFamily: 'Playfair Display, Georgia, serif',
-              fontWeight: 500,
-              fontSize: '1rem',
-              color: TOKENS.ink,
+              fontFamily: SANS,
+              fontSize: 14,
+              color: '#1a1a1a',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              mb: 0.25,
             }}
           >
             {product.name}
           </Typography>
-          <Typography
-            sx={{
-              fontWeight: 700,
-              fontSize: '0.95rem',
-              color: TOKENS.ink,
-              mb: 0.25,
-            }}
-          >
+          <Typography sx={{ fontFamily: SANS, fontSize: 14, color: '#1a1a1a', mt: 0.25 }}>
             Rs. {product.price?.toLocaleString() ?? product.price}
           </Typography>
         </Box>
         {product.owner?.username && (
           <Typography
-            variant="caption"
             onClick={goToProfile}
             sx={{
-              color: TOKENS.inkSoft,
+              fontFamily: SANS,
+              fontSize: 12,
+              color: '#6a6a6a',
+              mt: 0.5,
               cursor: 'pointer',
-              '&:hover': { color: TOKENS.ink, textDecoration: 'underline' },
+              '&:hover': { color: '#1a1a1a' },
             }}
           >
-            @{product.owner.username}
+            {product.owner.username}
           </Typography>
         )}
-      </CardContent>
-    </Card>
+      </Box>
+    </Box>
   );
 };
 
 const RecommendedSkeleton = () => (
-  <Card
-    elevation={0}
-    sx={{
-      border: `1px solid ${TOKENS.border}`,
-      borderRadius: 2,
-      overflow: 'hidden',
-    }}
-  >
-    <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '4/5' }} />
-    <CardContent sx={{ p: 1.5 }}>
-      <Skeleton variant="text" width="80%" height={20} />
-      <Skeleton variant="text" width="40%" height={20} />
-      <Skeleton variant="text" width="60%" height={16} />
-    </CardContent>
-  </Card>
+  <Box>
+    <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '1 / 1', borderRadius: '16px', bgcolor: '#f2f2f2' }} />
+    <Skeleton variant="text" width="70%" height={18} sx={{ mt: 1.25 }} />
+    <Skeleton variant="text" width="30%" height={18} />
+  </Box>
 );
 
 const RecommendedProductsSection = () => {
@@ -207,10 +159,9 @@ const RecommendedProductsSection = () => {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, backgroundColor: TOKENS.bgMuted, borderRadius: 0 }}>
+    <Box sx={{ bgcolor: '#f6f1ee', px: { xs: 2.5, md: 4, lg: 6 }, pt: { xs: 4, md: 5 }, pb: { xs: 2, md: 3 } }}>
       <SectionHeader
-        title="Recommended For You"
-        subtitle="Fresh picks, just for you"
+        title="Just in"
         viewAllTo="/catalogue"
         viewAllLabel="View all"
       />
@@ -224,7 +175,7 @@ const RecommendedProductsSection = () => {
           </Grid>
         ))}
       </Grid>
-    </Container>
+    </Box>
   );
 };
 

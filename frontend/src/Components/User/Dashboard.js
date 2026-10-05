@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { Box, Grid, Paper, Typography, LinearProgress, Divider } from '@mui/material';
-import CountUp from 'react-countup';
 import { Line, Doughnut } from 'react-chartjs-2';
 import { Chart, ArcElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import SkeletonLoader from '../Utils/skeletonLoader';
@@ -61,7 +60,6 @@ const Dashboard = () => {
   });
   const [reviewsData, setReviewsData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [topSellerRank, setTopSellerRank] = useState(0);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -93,7 +91,6 @@ const Dashboard = () => {
 
         setStats(userData.stats);
         setReviewsData(userData.reviewsData || {}); // Ensure safe state update
-        setTopSellerRank(userData.topSellerRank || 0);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching stats:", error.response?.data || error.message);

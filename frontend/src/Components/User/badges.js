@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Typography, Box, Tabs, Tab, Grid, Card, Badge,CardContent,Tooltip, CardHeader, CardMedia, Button } from '@mui/material';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import LockIcon from '@mui/icons-material/Lock';
+import { Paper, Box, Tabs, Tab, Grid, Card, Badge, Tooltip, CardHeader, CardMedia, Button } from '@mui/material';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
 const Badges = () => {
-  const dispatch = useDispatch();
   const [tabValue, setTabValue] = useState(0);
   const [showMore, setShowMore] = useState(false); 
     const [badgesData, setBadgesData] = useState({

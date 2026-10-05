@@ -5,10 +5,6 @@ import {
   Grid,
   Typography,
   Button,
-  Checkbox,
-  FormControlLabel,
-  Card,
-  CardContent,
   FormControl,
   Select,
   InputLabel,
@@ -17,30 +13,23 @@ import {
   Skeleton,
   Stack,
   Chip,
-  Divider,
   Container,
   Breadcrumbs,
   Link as MuiLink,
-  Radio,
-  RadioGroup,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Tooltip,
-  useTheme,
-  useMediaQuery,
+  Badge,
 } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
+import TuneIcon from '@mui/icons-material/Tune';
 import Layout from "../Layout/layout";
 import axios from 'axios';
 import sizeRanges from "../Utils/sizeRange";
+import womenImage from '../MostPopularItem/images/offwhitegownwomen.webp';
+import menImage from '../LimitedTimeDeals/images/men.jpg';
+import rackImage from '../LimitedTimeDeals/images/clotheshanging.jpg';
 
-// Lazy-load less critical components
-const SizeChartMUI = React.lazy(() => import("./sizechart"));
 const FilterDrawer = React.lazy(() => import("./filter"));
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -53,25 +42,28 @@ const TOKENS = {
   inkSoft: '#6B635A',
   bg: '#FFFFFF',
   bgMuted: '#FAF8F5',
-  accent: '#867070',
-  accentDark: '#576F72',
+  accent: '#85586F',
+  accentDark: '#6a4458',
   sold: 'rgba(0, 0, 0, 0.55)',
 };
 
-const SIDEBAR_WIDTH = 260;
+const SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+
+const SHOP_TABS = [
+  { id: 'women', title: 'Women', line: 'Dresses, tailoring, one-off finds', image: womenImage, alt: 'Woman in a beige dress' },
+  { id: 'men', title: 'Men', line: 'Shirts, layers, everyday pieces', image: menImage, alt: 'Man in a brown overshirt' },
+  { id: 'auctions', title: 'Auctions', line: 'A few pieces, highest bid', image: rackImage, alt: 'Clothes on white hangers' },
+];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Skeleton matching the real product card so loading doesn't shift layout
 // ─────────────────────────────────────────────────────────────────────────────
 const ProductCardSkeleton = () => (
-  <Card elevation={0} sx={{ border: `1px solid ${TOKENS.border}`, borderRadius: 2, overflow: 'hidden' }}>
-    <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '4/5' }} />
-    <CardContent sx={{ p: 1.5 }}>
-      <Skeleton variant="text" width="80%" height={20} />
-      <Skeleton variant="text" width="40%" height={20} />
-      <Skeleton variant="text" width="60%" height={16} />
-    </CardContent>
-  </Card>
+  <Box>
+    <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '1 / 1', borderRadius: '16px', bgcolor: '#f2f2f2' }} />
+    <Skeleton variant="text" width="70%" height={18} sx={{ mt: 1.25 }} />
+    <Skeleton variant="text" width="40%" height={18} />
+  </Box>
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -97,24 +89,11 @@ const ProductCard = React.memo(function ProductCard({ product, isFavorite, onTog
   };
 
   return (
-    <Card
-      elevation={0}
+    <Box
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      sx={{
-        position: 'relative',
-        backgroundColor: TOKENS.bg,
-        border: `1px solid ${TOKENS.border}`,
-        borderRadius: 2,
-        overflow: 'hidden',
-        transition: 'border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease',
-        '&:hover': {
-          borderColor: TOKENS.borderHover,
-          boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
-        },
-      }}
+      sx={{ position: 'relative', fontFamily: SANS }}
     >
-      {/* Image area: a clickable RouterLink covering the whole image */}
       <Box
         component={RouterLink}
         to={`/product/${product._id}`}
@@ -122,9 +101,10 @@ const ProductCard = React.memo(function ProductCard({ product, isFavorite, onTog
           display: 'block',
           position: 'relative',
           width: '100%',
-          aspectRatio: '4/5',
-          backgroundColor: TOKENS.bgMuted,
+          aspectRatio: '1 / 1',
+          backgroundColor: '#f2f2f2',
           overflow: 'hidden',
+          borderRadius: '16px',
         }}
       >
         {displayImage && (
@@ -134,7 +114,7 @@ const ProductCard = React.memo(function ProductCard({ product, isFavorite, onTog
             loading="lazy"
             decoding="async"
             width="400"
-            height="500"
+            height="400"
             style={{
               width: '100%',
               height: '100%',
@@ -188,8 +168,7 @@ const ProductCard = React.memo(function ProductCard({ product, isFavorite, onTog
         )}
       </Box>
 
-      {/* Body */}
-      <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+      <Box sx={{ pt: 1.25 }}>
         <Box
           component={RouterLink}
           to={`/product/${product._id}`}
@@ -228,47 +207,10 @@ const ProductCard = React.memo(function ProductCard({ product, isFavorite, onTog
             @{product.owner.username}
           </Typography>
         )}
-      </CardContent>
-    </Card>
+      </Box>
+    </Box>
   );
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sidebar facet — consistent accordion wrapper for every filter group
-// ─────────────────────────────────────────────────────────────────────────────
-const Facet = ({ title, defaultExpanded = true, children }) => (
-  <Accordion
-    defaultExpanded={defaultExpanded}
-    disableGutters
-    elevation={0}
-    sx={{
-      backgroundColor: 'transparent',
-      borderBottom: `1px solid ${TOKENS.border}`,
-      '&:before': { display: 'none' },
-      '&.Mui-expanded': { margin: 0 },
-    }}
-  >
-    <AccordionSummary
-      expandIcon={<ExpandMoreIcon />}
-      sx={{ px: 0, minHeight: 48, '&.Mui-expanded': { minHeight: 48 } }}
-    >
-      <Typography
-        sx={{
-          fontWeight: 600,
-          fontSize: '0.85rem',
-          letterSpacing: '0.04em',
-          textTransform: 'uppercase',
-          color: TOKENS.ink,
-        }}
-      >
-        {title}
-      </Typography>
-    </AccordionSummary>
-    <AccordionDetails sx={{ px: 0, pt: 0, pb: 2 }}>
-      {children}
-    </AccordionDetails>
-  </Accordion>
-);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Main page
@@ -276,8 +218,6 @@ const Facet = ({ title, defaultExpanded = true, children }) => (
 const CataloguePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // Data state
   const [products, setProducts] = useState([]);
@@ -422,22 +362,6 @@ const CataloguePage = () => {
     }
   };
 
-  // ── Filter counts (so users know what each option will return) ────────────
-  const facetCounts = useMemo(() => {
-    const base = products.filter((p) => {
-      const searchMatch = !searchQuery || (p.name && p.name.toLowerCase().includes(searchQuery.toLowerCase()));
-      return searchMatch;
-    });
-    const counts = {
-      category: {},
-      type: {},
-    };
-    defaultCategories.forEach((c) => { counts.category[c] = base.filter((p) => p.category === c).length; });
-    productTypes.forEach((t) => { counts.type[t] = base.filter((p) => p.type === t).length; });
-    return counts;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, searchQuery]);
-
   // ── Favorites (visual-only for now — store in localStorage for persistence) ──
   useEffect(() => {
     try {
@@ -461,7 +385,7 @@ const CataloguePage = () => {
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <Layout>
-      <Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 } }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 }, fontFamily: SANS }}>
 
         {/* Breadcrumbs */}
         <Breadcrumbs separator="›" sx={{ mb: 1, fontSize: '0.85rem' }}>
@@ -469,189 +393,77 @@ const CataloguePage = () => {
           <Typography color="text.primary" sx={{ fontSize: '0.85rem' }}>Shop</Typography>
         </Breadcrumbs>
 
-        {/* Page header */}
-        <Box sx={{ mb: { xs: 2, md: 3 } }}>
+        <Box sx={{ mb: 2.5 }}>
           <Typography
-            variant="h1"
+            component="h1"
             sx={{
-              fontFamily: 'Playfair Display, Georgia, serif',
-              fontSize: { xs: '1.75rem', md: '2.25rem' },
-              fontWeight: 700,
-              color: TOKENS.ink,
-              mb: 0.5,
+              fontFamily: SANS,
+              fontSize: { xs: '1.35rem', md: '1.6rem' },
+              fontWeight: 650,
+              letterSpacing: '-0.03em',
+              color: '#24181c',
             }}
           >
-            {searchQuery ? `Results for "${searchQuery}"` : 'Shop All'}
+            {searchQuery ? `Results for "${searchQuery}"` : 'Shop'}
           </Typography>
-          <Typography variant="body2" sx={{ color: TOKENS.inkSoft }}>
+          <Typography sx={{ fontFamily: SANS, fontSize: 13, color: TOKENS.inkSoft, mt: 0.5 }}>
             {loading
               ? 'Loading items…'
               : `${filteredProducts.length} ${filteredProducts.length === 1 ? 'item' : 'items'}${filteredProducts.length !== products.length ? ` (of ${products.length})` : ''}`}
           </Typography>
         </Box>
 
-        <Divider sx={{ mb: 3, borderColor: TOKENS.border }} />
-
-        {/* Mobile filter trigger + drawer (the drawer renders its own button on mobile) */}
-        <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 2 }}>
-          <Suspense fallback={null}>
-            <FilterDrawer
-              isOpen={isFilterOpen}
-              onClose={setIsFilterOpen}
-              categories={defaultCategories}
-              sizes={sizes}
-              productTypes={productTypes}
-              priceRanges={priceOptions}
-              category={category}
-              selectedSizes={selectedSizes}
-              selectedTypes={selectedTypes}
-              priceRange={priceRange}
-              setCategory={setCategory}
-              setSelectedSizes={setSelectedSizes}
-              setSelectedTypes={setSelectedTypes}
-              setPriceRange={setPriceRange}
-            />
-          </Suspense>
-        </Box>
-
-        <Box sx={{ display: 'flex', gap: { md: 4 } }}>
-
-          {/* ───────── DESKTOP SIDEBAR ───────── */}
-          <Box
-            component="aside"
-            sx={{
-              display: { xs: 'none', md: 'block' },
-              width: SIDEBAR_WIDTH,
-              flexShrink: 0,
-              alignSelf: 'flex-start',
-              position: 'sticky',
-              top: 24,
-              maxHeight: 'calc(100vh - 48px)',
-              overflowY: 'auto',
-              pr: 1,
-            }}
-          >
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
-              <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', color: TOKENS.ink }}>
-                Filters
-              </Typography>
-              {hasActiveFilters && (
-                <Button
-                  size="small"
-                  onClick={clearAllFilters}
-                  sx={{ color: TOKENS.inkSoft, textTransform: 'none', fontSize: '0.8rem' }}
-                >
-                  Clear all
-                </Button>
-              )}
-            </Stack>
-
-            {/* Category — single-select RADIO (matches behavior) */}
-            <Facet title="Category">
-              <RadioGroup
-                value={category}
-                onChange={(e) => setCategory(e.target.value === category ? '' : e.target.value)}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+            gap: 1.5,
+            mb: 3,
+          }}
+        >
+          {SHOP_TABS.map((tab) => {
+            const selected = tab.id !== 'auctions' && category === tab.id;
+            return (
+              <Box
+                key={tab.id}
+                component="button"
+                type="button"
+                onClick={() => {
+                  if (tab.id === 'auctions') navigate('/bidProduct');
+                  else setCategory((current) => (current === tab.id ? '' : tab.id));
+                }}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1.5,
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  fontFamily: SANS,
+                  color: '#24181c',
+                  bgcolor: selected ? '#f6eef2' : '#fff',
+                  border: selected ? '1.5px solid #85586F' : '1px solid #f0e8ec',
+                  borderRadius: '16px',
+                  p: 1,
+                  pr: 1.5,
+                  boxShadow: '0 10px 30px rgba(60, 30, 45, 0.08)',
+                  transition: 'transform 0.2s ease, background-color 0.2s ease',
+                  '&:hover': { transform: 'translateY(-2px)' },
+                }}
               >
-                {defaultCategories.map((cat) => (
-                  <FormControlLabel
-                    key={cat}
-                    value={cat}
-                    control={<Radio size="small" sx={{ py: 0.25 }} />}
-                    label={
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 200, fontSize: '0.875rem' }}>
-                        <span style={{ textTransform: 'capitalize' }}>{cat}</span>
-                        <span style={{ color: TOKENS.inkSoft }}>{facetCounts.category[cat] ?? 0}</span>
-                      </Box>
-                    }
-                    onClick={(e) => {
-                      // Allow clicking the selected radio again to deselect
-                      if (category === cat) {
-                        e.preventDefault();
-                        setCategory('');
-                      }
-                    }}
-                    sx={{ mr: 0, '& .MuiFormControlLabel-label': { width: '100%' } }}
-                  />
-                ))}
-              </RadioGroup>
-            </Facet>
-
-            {/* Size — only meaningful with a category */}
-            {category && (
-              <Facet title="Size">
-                {sizes.map((size) => (
-                  <FormControlLabel
-                    key={size}
-                    sx={{ display: 'flex', mr: 0 }}
-                    control={
-                      <Checkbox
-                        size="small"
-                        checked={selectedSizes.includes(size)}
-                        onChange={() => {
-                          setSelectedSizes((prev) =>
-                            prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-                          );
-                        }}
-                      />
-                    }
-                    label={
-                      <Typography sx={{ fontSize: '0.875rem' }}>{size.toUpperCase()}</Typography>
-                    }
-                  />
-                ))}
-              </Facet>
-            )}
-
-            {/* Product type — multi-select CHECKBOX */}
-            <Facet title="Type">
-              {productTypes.map((type) => (
-                <FormControlLabel
-                  key={type}
-                  sx={{ display: 'flex', mr: 0 }}
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={selectedTypes.includes(type)}
-                      onChange={() => {
-                        setSelectedTypes((prev) =>
-                          prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-                        );
-                      }}
-                    />
-                  }
-                  label={
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 200, fontSize: '0.875rem' }}>
-                      <span style={{ textTransform: 'capitalize' }}>{type}</span>
-                      <span style={{ color: TOKENS.inkSoft }}>{facetCounts.type[type] ?? 0}</span>
-                    </Box>
-                  }
+                <Box
+                  component="img"
+                  src={tab.image}
+                  alt={tab.alt}
+                  sx={{ width: 64, height: 64, objectFit: 'cover', objectPosition: 'center 20%', borderRadius: '14px', flexShrink: 0 }}
                 />
-              ))}
-            </Facet>
-
-            {/* Price — single-select RADIO with deselect-on-reclick */}
-            <Facet title="Price">
-              <RadioGroup
-                value={priceRange}
-                onChange={(e) => setPriceRange(e.target.value)}
-              >
-                {priceOptions.map((price) => (
-                  <FormControlLabel
-                    key={price}
-                    value={price.toString()}
-                    control={<Radio size="small" sx={{ py: 0.25 }} />}
-                    label={<Typography sx={{ fontSize: '0.875rem' }}>Up to Rs. {price.toLocaleString()}</Typography>}
-                    onClick={(e) => {
-                      if (priceRange === price.toString()) {
-                        e.preventDefault();
-                        setPriceRange('');
-                      }
-                    }}
-                  />
-                ))}
-              </RadioGroup>
-            </Facet>
-          </Box>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontFamily: SANS, fontWeight: 650, fontSize: 16, lineHeight: 1.15 }}>{tab.title}</Typography>
+                  <Typography sx={{ fontFamily: SANS, fontSize: 12, color: '#6d5c63', mt: 0.4, lineHeight: 1.35 }}>{tab.line}</Typography>
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
 
           {/* ───────── MAIN CONTENT ───────── */}
           <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -672,14 +484,27 @@ const CataloguePage = () => {
               </Typography>
 
               <Stack direction="row" spacing={1.5} alignItems="center">
-                <Tooltip title="Size guide">
-                  <Box>
-                    <Suspense fallback={<Skeleton variant="rectangular" width={40} height={36} />}>
-                      <SizeChartMUI />
-                    </Suspense>
-                  </Box>
-                </Tooltip>
-                <FormControl size="small" sx={{ minWidth: 180 }}>
+                <IconButton
+                  onClick={() => setIsFilterOpen(true)}
+                  aria-label="Filters"
+                  sx={{
+                    width: 42,
+                    height: 42,
+                    border: '1px solid #e7e0dc',
+                    borderRadius: '999px',
+                    color: '#24181c',
+                    '&:hover': { bgcolor: '#f6eef2', borderColor: '#85586F' },
+                  }}
+                >
+                  <Badge
+                    badgeContent={selectedTypes.length + selectedSizes.length + (priceRange ? 1 : 0)}
+                    invisible={!(selectedTypes.length || selectedSizes.length || priceRange)}
+                    sx={{ '& .MuiBadge-badge': { bgcolor: '#85586F', color: '#fff' } }}
+                  >
+                    <TuneIcon sx={{ fontSize: 20 }} />
+                  </Badge>
+                </IconButton>
+                <FormControl size="small" sx={{ minWidth: 160 }}>
                   <InputLabel>Sort by</InputLabel>
                   <Select
                     value={sortBy}
@@ -833,7 +658,27 @@ const CataloguePage = () => {
               </>
             )}
           </Box>
-        </Box>
+
+        <Suspense fallback={null}>
+          <FilterDrawer
+            isOpen={isFilterOpen}
+            onClose={setIsFilterOpen}
+            sizes={sizes}
+            productTypes={productTypes}
+            priceRanges={priceOptions}
+            selectedSizes={selectedSizes}
+            selectedTypes={selectedTypes}
+            priceRange={priceRange}
+            setSelectedSizes={setSelectedSizes}
+            setSelectedTypes={setSelectedTypes}
+            setPriceRange={setPriceRange}
+            onClear={() => {
+              setSelectedTypes([]);
+              setSelectedSizes([]);
+              setPriceRange('');
+            }}
+          />
+        </Suspense>
       </Container>
     </Layout>
   );

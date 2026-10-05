@@ -15,9 +15,12 @@ load_dotenv()  # Load variables from .env
 # Setup Gemini
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# Setup MongoDB
+# Setup MongoDB. Uses the database name in MONGO_URI (for example /RnR).
 client = MongoClient(os.getenv("MONGO_URI"))
-db = client["RewindAndRevive"]
+try:
+    db = client.get_default_database()
+except Exception:
+    db = client["RewindAndRevive"]
 collection = db["products"]
 
 
@@ -96,7 +99,7 @@ def chat_with_bot(user_query, image_path=None):
                 image_bytes = f.read()
 
             # Use Gemini to detect clothing type from image
-            model = genai.GenerativeModel("gemini-2.0-flash")
+            model = genai.GenerativeModel("gemini-3.8-flash")
             response = model.generate_content([
                 {"mime_type": "image/jpeg", "data": image_bytes},
                 {"text": "Is this image showing primarily a top (shirt, t-shirt, blouse, etc.) or a bottom (jeans, skirt, pants, etc.)? Answer with only one word: 'top' or 'bottom'."}
@@ -146,7 +149,7 @@ def chat_with_bot(user_query, image_path=None):
 
     # Step 5: Gemini reply
     try:
-        chat = genai.GenerativeModel("gemini-2.0-flash").start_chat(history=conversation_history)
+        chat = genai.GenerativeModel("gemini-3.8-flash").start_chat(history=conversation_history)
 
         if image_path and 'image_bytes' in locals():
             prompt_text = f"{user_query}. "

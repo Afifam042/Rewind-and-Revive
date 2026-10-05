@@ -40,6 +40,7 @@ import ProductChat from '../ProductChat/ProductChat';
 import SkeletonLoader from '../Utils/skeletonLoader';
 import axios from 'axios';
 import MatchOutfitModal from './matchMyOutfit';
+import SizeChartMUI from './sizechart';
 
 // shared design tokens
 const COLORS = {
@@ -167,10 +168,6 @@ const SectionHeading = ({ eyebrow, title, action }) => (
 const ProductPage = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem('cart');
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
   const [mainImage, setMainImage] = useState('');
   const [shoppingCart, setShoppingCart] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
@@ -259,25 +256,19 @@ const ProductPage = () => {
     fetchRecs();
   }, [productId]);
 
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    setCart(storedCart);
-  }, []);
-
   const handleAddToCart = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/api/product/${productId}`);
       const productData = response.data;
-      setCart((prevCart) => {
-        const isProductInCart = prevCart.find((item) => item.id === productId);
-        if (isProductInCart) return prevCart;
+      const prevCart = JSON.parse(localStorage.getItem('cart')) || [];
+      const isProductInCart = prevCart.find((item) => item.id === productId);
+      if (!isProductInCart) {
         const updatedCart = [
           ...prevCart,
           { id: productId, name: productData.name, price: productData.price, quantity: 1 },
         ];
         localStorage.setItem('cart', JSON.stringify(updatedCart));
-        return updatedCart;
-      });
+      }
       setShoppingCart(true);
     } catch (error) {
       console.error('Error adding product to cart:', error);
@@ -781,25 +772,14 @@ const ProductPage = () => {
             </Box>
 
             {/* MEASUREMENTS table */}
-            {sizeDetails.length > 0 && (
-              <Box sx={{ mb: { xs: 6, md: 9 } }}>
-                <SectionHeading
-                  eyebrow="Fit guide"
-                  title="Measurements"
-                  action={
-                    <Typography
-                      sx={{
-                        fontSize: 13,
-                        color: COLORS.accent,
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        '&:hover': { textDecoration: 'underline' },
-                      }}
-                    >
-                      How to measure →
-                    </Typography>
-                  }
-                />
+            <Box sx={{ mb: { xs: 6, md: 9 } }}>
+              <SectionHeading
+                eyebrow="Fit guide"
+                title="Measurements"
+                action={<SizeChartMUI />}
+              />
+              {sizeDetails.length > 0 && (
+                <>
                 <Box
                   sx={{
                     bgcolor: COLORS.surface,
@@ -834,8 +814,9 @@ const ProductPage = () => {
                 <Typography sx={{ fontSize: 12, color: COLORS.textSecondary, mt: 1.5, fontStyle: 'italic' }}>
                   All measurements taken flat, in inches.
                 </Typography>
-              </Box>
-            )}
+                </>
+              )}
+            </Box>
 
             {/* SHIPPING & RETURNS */}
             <Box sx={{ mb: { xs: 6, md: 9 } }}>

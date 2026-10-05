@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LiveTvIcon from "@mui/icons-material/LiveTv";
 
 const AuctionCard = ({ auction }) => {

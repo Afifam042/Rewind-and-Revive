@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import io from 'socket.io-client';
-import { useNavigate, NavLink, Link as RouterLink, useLocation } from 'react-router-dom';
+import { useNavigate, NavLink, Link as RouterLink } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import Login from "../Login/login.js";
@@ -60,13 +60,13 @@ import { jwtDecode } from "jwt-decode";
 // ----- shared design tokens -----
 const COLORS = {
   surface: '#FFFFFF',
-  border: '#ECEAE4',
+  border: '#E5E5E5',
   accent: '#85586F',
-  accentDark: '#6B4459',
-  accentSoft: '#F5EEF1',
+  accentDark: '#5e3d4c',
+  accentSoft: '#f6eef2',
   textPrimary: '#1A1A1A',
-  textSecondary: '#6B6B6B',
-  live: '#E53935',
+  textSecondary: '#6A6A6A',
+  live: '#1A1A1A',
 };
 
 // Primary nav items used in both desktop bar + mobile drawer
@@ -95,9 +95,11 @@ const NavItem = ({ item }) => (
           gap: 0.75,
           cursor: 'pointer',
           color: isActive ? COLORS.accent : COLORS.textPrimary,
-          fontSize: 14,
-          fontWeight: 600,
-          letterSpacing: 0.2,
+          fontSize: 12,
+          fontWeight: 500,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
           transition: 'color 0.2s ease',
           '&:hover': { color: COLORS.accent },
           '&::after': {
@@ -119,23 +121,16 @@ const NavItem = ({ item }) => (
         {item.label}
         {item.live && (
           <Box
+            component="span"
             sx={{
-              ml: 0.25,
-              px: 0.75,
-              py: 0.125,
-              fontSize: 9,
-              fontWeight: 700,
-              letterSpacing: 0.6,
-              color: '#fff',
-              bgcolor: COLORS.live,
-              borderRadius: 1,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.25,
-              '&::before': { content: '"●"', fontSize: 7 },
+              ml: 0.75,
+              fontSize: 10,
+              fontWeight: 500,
+              letterSpacing: '0.12em',
+              color: COLORS.textSecondary,
             }}
           >
-            LIVE
+            Live
           </Box>
         )}
       </Box>
@@ -154,7 +149,6 @@ function Navbar() {
   const user = localStorage.getItem('token');
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
 
   const [shoppingCart, setShoppingCart] = useState(false);
   const [login, setLogin] = useState(false);
@@ -285,14 +279,11 @@ function Navbar() {
   }, [user, dispatch]);
 
   const handleNotificationsToggle = () => dispatch(toggleNotifications());
-  const handleCartOpen = () => setShoppingCart(true);
   const handleCartClose = () => setShoppingCart(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) setIsLoggedIn(true);
-    else setIsLoggedIn(false);
-  }, [localStorage.getItem('token')]);
+    setIsLoggedIn(Boolean(user));
+  }, [user]);
 
   const handleLogin = () => setLogin(true);
 
@@ -356,8 +347,6 @@ function Navbar() {
     }
   }, [searchOpen]);
 
-  const performSearch = () => setSearchOpen(true);
-
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -369,6 +358,17 @@ function Navbar() {
 
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    if (!showSuggestions) return undefined;
+    function handleClickOutside(event) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showSuggestions]);
   const catalogueCacheRef = useRef(null);
   const searchDebounceRef = useRef(null);
 
@@ -429,115 +429,6 @@ function Navbar() {
     setSearchOpen(false);
   };
 
-  // ----- search overlay (shared between desktop + mobile) -----
-  const SearchOverlay = () => (
-    searchOpen && (
-      <Box
-        component="form"
-        onSubmit={handleSearchSubmit}
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bgcolor: COLORS.surface,
-          borderBottom: `1px solid ${COLORS.border}`,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
-          py: 2.5,
-          px: { xs: 2, md: 6 },
-          zIndex: 10000,
-        }}
-      >
-        <Box sx={{ maxWidth: 760, mx: 'auto', position: 'relative' }}>
-          <TextField
-            fullWidth
-            inputRef={searchInputRef}
-            value={searchQuery}
-            onChange={handleSearchInputChange}
-            placeholder="Search for products, brands, eras..."
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: COLORS.textSecondary }} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    size="small"
-                    onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                    sx={iconBtnSx}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                </InputAdornment>
-              ),
-              sx: {
-                borderRadius: 2,
-                fontSize: 16,
-                '& fieldset': { borderColor: COLORS.border },
-                '&:hover fieldset': { borderColor: COLORS.accent },
-                '&.Mui-focused fieldset': { borderColor: COLORS.accent },
-              },
-            }}
-          />
-          {showSuggestions && searchSuggestions.length > 0 && (
-            <Paper
-              sx={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                right: 0,
-                mt: 1,
-                borderRadius: 2,
-                border: `1px solid ${COLORS.border}`,
-                boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
-                maxHeight: 380,
-                overflowY: 'auto',
-                zIndex: 10001,
-              }}
-              elevation={0}
-            >
-              {searchSuggestions.map((suggestion, index) => (
-                <Box
-                  key={suggestion.id || index}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                  sx={{
-                    p: 1.5,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    cursor: 'pointer',
-                    borderBottom: index < searchSuggestions.length - 1 ? `1px solid ${COLORS.border}` : 'none',
-                    '&:hover': { bgcolor: COLORS.accentSoft },
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={suggestion?.images?.[0] || '/placeholder.jpg'}
-                    alt={suggestion.text}
-                    sx={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 1.5, flexShrink: 0 }}
-                  />
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography sx={{ fontSize: 14, fontWeight: 600, color: COLORS.textPrimary }}>
-                      {suggestion.text}
-                    </Typography>
-                    {suggestion.category && (
-                      <Typography sx={{ fontSize: 12, color: COLORS.textSecondary }}>
-                        in {suggestion.category}
-                      </Typography>
-                    )}
-                  </Box>
-                </Box>
-              ))}
-            </Paper>
-          )}
-        </Box>
-      </Box>
-    )
-  );
-
-  // ----- notifications dropdown -----
   const NotificationsDropdown = () => (
     <Paper
       ref={dropdownRef}
@@ -627,11 +518,20 @@ function Navbar() {
       <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Box
-            component="img"
-            src={require("./S.png")}
-            alt="Logo"
-            sx={{ height: 40, objectFit: 'contain' }}
-          />
+            component={RouterLink}
+            to="/"
+            onClick={() => setDrawerOpen(false)}
+            sx={{
+              textDecoration: 'none',
+              color: '#24181c',
+              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+              fontWeight: 500,
+              fontSize: 16,
+              letterSpacing: '-0.03em',
+            }}
+          >
+            Rewind and Revive
+          </Box>
           <IconButton onClick={handleDrawerToggle} sx={iconBtnSx} size="small">
             <CloseIcon fontSize="small" />
           </IconButton>
@@ -796,10 +696,6 @@ function Navbar() {
           borderBottom: `1px solid ${COLORS.border}`,
         }}
       >
-        <Box ref={searchContainerRef}>
-          <SearchOverlay />
-        </Box>
-
         {login && (
           <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 5 }}>
             <Login setLogin={setLogin} />
@@ -818,25 +714,30 @@ function Navbar() {
             minHeight: 72,
           }}
         >
-          {/* Logo */}
           <Box
             component={RouterLink}
             to="/"
-            sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              color: '#24181c',
+              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+              fontWeight: 500,
+              fontSize: { xs: 15, md: 18 },
+              letterSpacing: '-0.03em',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
           >
-            <Box
-              component="img"
-              src={require("./S.png")}
-              alt="Rewind & Revive"
-              sx={{ height: 44, objectFit: 'contain' }}
-            />
+            Rewind and Revive
           </Box>
 
           {/* Desktop nav links */}
           <Stack
             direction="row"
             alignItems="center"
-            sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.5 }}
+            sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.25 }}
           >
             {NAV_ITEMS.map((item) => (
               <NavItem key={item.to} item={item} />
@@ -847,14 +748,94 @@ function Navbar() {
           <Stack
             direction="row"
             alignItems="center"
-            spacing={0.5}
+            spacing={1.75}
             sx={{ position: 'relative' }}
           >
-            <Tooltip title="Search">
-              <IconButton onClick={performSearch} sx={iconBtnSx}>
-                <SearchIcon />
-              </IconButton>
-            </Tooltip>
+            <Box
+              component="form"
+              onSubmit={handleSearchSubmit}
+              ref={searchContainerRef}
+              sx={{ position: 'relative' }}
+            >
+              <TextField
+                inputRef={searchInputRef}
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                placeholder="Search"
+                size="small"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ fontSize: 18, color: COLORS.accent }} />
+                    </InputAdornment>
+                  ),
+                  sx: {
+                    height: 38,
+                    borderRadius: '999px',
+                    bgcolor: '#f6f1ee',
+                    fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+                    fontSize: 13,
+                    '& fieldset': { borderColor: 'transparent' },
+                    '&:hover fieldset': { borderColor: COLORS.accent },
+                    '&.Mui-focused fieldset': { borderColor: COLORS.accent },
+                  },
+                }}
+                sx={{
+                  width: { xs: 128, sm: 168, lg: 210 },
+                  '& .MuiInputBase-input': { py: 0.85, pr: 1.5 },
+                }}
+              />
+              {showSuggestions && searchSuggestions.length > 0 && (
+                <Paper
+                  sx={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    width: { xs: 260, sm: 320 },
+                    borderRadius: 2,
+                    border: `1px solid ${COLORS.border}`,
+                    boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
+                    maxHeight: 380,
+                    overflowY: 'auto',
+                    zIndex: 10001,
+                  }}
+                  elevation={0}
+                >
+                  {searchSuggestions.map((suggestion, index) => (
+                    <Box
+                      key={suggestion.id || index}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      sx={{
+                        p: 1.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        cursor: 'pointer',
+                        borderBottom: index < searchSuggestions.length - 1 ? `1px solid ${COLORS.border}` : 'none',
+                        '&:hover': { bgcolor: COLORS.accentSoft },
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src={suggestion?.images?.[0] || '/placeholder.jpg'}
+                        alt={suggestion.text}
+                        sx={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 1.5, flexShrink: 0 }}
+                      />
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography sx={{ fontSize: 14, fontWeight: 600, color: COLORS.textPrimary }}>
+                          {suggestion.text}
+                        </Typography>
+                        {suggestion.category && (
+                          <Typography sx={{ fontSize: 12, color: COLORS.textSecondary }}>
+                            in {suggestion.category}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                  ))}
+                </Paper>
+              )}
+            </Box>
 
             {/* Sell button — labeled, not just a + */}
             <Button
@@ -868,7 +849,6 @@ function Navbar() {
                 color: COLORS.accent,
                 borderRadius: 2,
                 px: 1.5,
-                ml: 0.5,
                 '&:hover': { bgcolor: COLORS.accentSoft },
               }}
               endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
@@ -975,20 +955,21 @@ function Navbar() {
 
             {!isLoggedIn && (
               <Button
-                variant="contained"
+                variant="outlined"
                 onClick={handleLogin}
                 sx={{
                   display: { xs: 'none', md: 'inline-flex' },
-                  ml: 1,
-                  bgcolor: COLORS.accent,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: 14,
-                  px: 2.5,
-                  py: 0.85,
-                  boxShadow: 'none',
-                  '&:hover': { bgcolor: COLORS.accentDark, boxShadow: 'none' },
+                  color: COLORS.accent,
+                  borderColor: COLORS.accent,
+                  borderRadius: 0,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  fontWeight: 500,
+                  fontSize: 12,
+                  fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+                  px: 2,
+                  py: 0.7,
+                  '&:hover': { bgcolor: COLORS.accent, color: '#fff', borderColor: COLORS.accent },
                 }}
               >
                 Log in
@@ -996,7 +977,7 @@ function Navbar() {
             )}
 
             <IconButton
-              sx={{ ...iconBtnSx, display: { xs: 'inline-flex', md: 'none' }, ml: 0.5 }}
+              sx={{ ...iconBtnSx, display: { xs: 'inline-flex', md: 'none' } }}
               onClick={handleDrawerToggle}
             >
               <MenuIcon />

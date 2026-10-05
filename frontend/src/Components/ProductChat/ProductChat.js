@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
-import { Box,Typography, TextField, Button, Paper, CircularProgress, List, ListItem,ListItemText, Divider, Select, MenuItem, FormControl, InputLabel,} from "@mui/material";
+import { Box, Typography, TextField, Button, Paper, CircularProgress, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 let socket;
 
@@ -192,27 +192,9 @@ useEffect(() => {
   }, [userId, buyerId, sellerId, productId, isSeller]);
 
 
-const [isChatOpen, setIsChatOpen] = useState(false);
-
-
-const openChatFromQuery = searchParams.get("openChat") === "true";
-
-
 useEffect(() => {
-
-  if (openChatFromQuery) {
-    setIsChatOpen(true);
-  }
-}, [openChatFromQuery, location.search]); 
-
-useEffect(() => {
- 
   const handleLocationChange = () => {
     const currentParams = new URLSearchParams(window.location.search);
-    const shouldOpenChat = currentParams.get("openChat") === "true";
-    setIsChatOpen(shouldOpenChat);
-    
-    
     const partnerId = currentParams.get("chatPartnerId");
     if (partnerId && buyersList.some(b => b._id === partnerId)) {
       setSelectedBuyer(partnerId);
@@ -299,7 +281,7 @@ useEffect(() => {
   return () => {
     if (socket) socket.off("receiveMessage");
   };
-}, [userId, receiverId, productId, socket]);
+}, [userId, receiverId, productId]);
  
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

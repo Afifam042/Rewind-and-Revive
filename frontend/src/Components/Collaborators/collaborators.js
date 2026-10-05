@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Grid, Link, Card, CardMedia, CardContent } from '@mui/material';
 import Layout from '../Layout/layout';
-import { grey } from '@mui/material/colors';
+
 const CollaboratorsSection = () => {
   // Sample collaborators data
   const collaborators = [

@@ -1,5 +1,4 @@
 import React, { useState,useEffect } from "react"; 
-import { useNavigate } from 'react-router-dom'; 
 import { Paper, Box, TextField, IconButton, Typography, Stack, Button, useMediaQuery, useTheme } from "@mui/material"; 
 import { GoogleLogin } from '@react-oauth/google';
 import EmailIcon from '@mui/icons-material/Email'; 
@@ -24,10 +23,8 @@ import RobotImage from './images/robot.png';
 import OnlineShopImage from './images/online-shop.png';
 
 function Login({ setLogin }) { 
-    const navigate = useNavigate(); 
     const theme = useTheme(); 
     const isMobile = useMediaQuery(theme.breakpoints.down('md')); 
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm')); 
 
     // State Management 
     const [openSnackbar, setOpenSnackbar] = useState(false); 
@@ -127,12 +124,10 @@ function Login({ setLogin }) {
             { src: OnlineShopImage, top: "-10%", left: "45%" },
         ];
     useEffect(() => {
-     
-
-        const timeouts = imageConfigs.map((_, index) =>
+        const timeouts = Array.from({ length: 10 }, (_, index) =>
             setTimeout(() => setVisibleIndexes((prev) => [...prev, index]), index * 300)
         );
-          return () => timeouts.forEach(clearTimeout); 
+        return () => timeouts.forEach(clearTimeout);
     }, []);
 
 

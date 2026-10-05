@@ -25,7 +25,6 @@ const MatchOutfitModal = ({ open, onClose, product }) => {
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
   const [isLoading, setIsLoading] = useState(true);
   const [matchingItems, setMatchingItems] = useState([]);
-  const [peopleAlsoBuy, setPeopleAlsoBuy] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -61,14 +60,12 @@ const MatchOutfitModal = ({ open, onClose, product }) => {
             
 
             setMatchingItems(matchItems);
-            setPeopleAlsoBuy(matchItems.slice(0, 6)); 
             setIsLoading(false);
           }
         } catch (error) {
           console.error('Failed to fetch recommendations', error);
           if (isMounted) {
             setMatchingItems([]);
-            setPeopleAlsoBuy([]);
             setIsLoading(false);
           }
         }

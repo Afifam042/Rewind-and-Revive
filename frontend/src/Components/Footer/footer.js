@@ -8,7 +8,6 @@ import {
   Link,
   IconButton,
   Divider,
-  InputAdornment,
 } from '@mui/material';
 import { Facebook, Twitter, Instagram, YouTube } from '@mui/icons-material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -19,8 +18,8 @@ const COLORS = {
   bg: '#1A1A1A',
   surface: '#222222',
   border: 'rgba(255,255,255,0.10)',
-  accent: '#C9A2B4',
-  accentDark: '#85586F',
+  accent: 'rgba(255,255,255,0.72)',
+  accentDark: '#ffffff',
   accentSoft: 'rgba(201,162,180,0.12)',
   textPrimary: '#FFFFFF',
   textSecondary: 'rgba(255,255,255,0.62)',
